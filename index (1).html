@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#e85d04">
+<title>Liya's Pomodoro</title>
+
+<style>
+:root {
+    --accent: #e85d04;
+    --bg: #f5f5f5;
+    --card: rgba(255,255,255,.92);
+    --text: #222;
+    --muted: #777;
+    --border: #ddd;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: .3s;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.app {
+    max-width: 1100px;
+    margin: auto;
+    padding: 25px;
+}
+
+/* HEADER */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.settings-btn {
+    border: 0;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 10px 15px;
+}
+
+/* MAIN */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.05);
+}
+
+/* TIMER */
+
+.timer-card {
+    text-align: center;
+}
+
+.mode {
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.timer {
+    font-size: clamp(65px, 12vw, 110px);
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin: 10px 0 25px;
+}
+
+.current-task {
+    color: var(--muted);
+    margin-bottom: 20px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.controls button {
+    border: 0;
+    border-radius: 12px;
+    padding: 12px 20px;
+    background: #eee;
+}
+
+.controls .primary {
+    background: var(--accent);
+    color: white;
+}
+
+/* PROGRESS */
+
+.progress-container {
+    margin-top: 25px;
+}
+
+.progress-bar {
+    height: 10px;
+    background: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width .3s;
+}
+
+.progress-text {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* TASKS */
+
+.task-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.task-input input {
+    flex: 1;
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.add-btn {
+    border: 0;
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    padding: 0 18px;
+}
+
+.task {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+}
+
+.task.active {
+    border: 2px solid var(--accent);
+}
+
+.task-info {
+    flex: 1;
+}
+
+.task-name {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.task-meta {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.task-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.task-actions button {
+    border: 0;
+    background: #eee;
+    padding: 7px 9px;
+    border-radius: 8px;
+}
+
+.session-dots {
+    display: flex;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ddd;
+}
+
+.dot.done {
+    background: var(--accent);
+}
+
+/* SETTINGS */
+
+.settings {
+    margin-top: 20px;
+}
+
+.settings h2 {
+    margin-top: 0;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin: 14px 0;
+}
+
+.setting-row input[type="number"] {
+    width: 90px;
+    padding: 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.setting-row input[type="color"] {
+    width: 60px;
+    height: 38px;
+    border: 0;
+    padding: 0;
+}
+
+select {
+    padding: 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+/* EMPTY */
+
+.empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 25px 0;
+}
+
+/* MOBILE */
+
+@media (max-width: 750px) {
+
+    .app {
+        padding: 15px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 22px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .timer {
+        font-size: 70px;
+    }
+
+    .task {
+        align-items: flex-start;
+    }
+
+    .task-actions {
+        flex-direction: column;
+    }
+
+    .setting-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .setting-row input,
+    .setting-row select {
+        width: 100%;
+    }
+}
+
+/* SINGLE-PAGE / MOBILE POLISH */
+html { scroll-behavior: smooth; }
+body { overflow-x: hidden; }
+.brand { display:flex; flex-direction:column; gap:4px; }
+.welcome { margin:0; color:var(--muted); font-size:15px; }
+.card { min-width:0; }
+.task-info { min-width:0; }
+.task-name { overflow-wrap:anywhere; }
+@media (max-width:480px) {
+ .app { padding:12px; }
+ header { align-items:flex-start; gap:12px; }
+ header h1 { font-size:20px; }
+ .welcome { font-size:14px; }
+ .settings-btn { padding:9px 11px; white-space:nowrap; }
+ .timer { font-size:clamp(56px,19vw,76px); letter-spacing:1px; }
+ .controls { flex-wrap:wrap; }
+ .controls button { flex:1 1 90px; }
+ .task-input { flex-wrap:wrap; }
+ .task-input input { min-width:0; flex-basis:100%; }
+ .add-btn { min-height:42px; flex:1; }
+ .task { flex-direction:column; }
+ .task-actions { flex-direction:row; width:100%; justify-content:flex-end; }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+    <div class="brand"><h1>🍅 Liya's Pomodoro</h1><p class="welcome">Hi Liya 👋</p></div>
+    <button class="settings-btn" onclick="scrollToSettings()">⚙️ Settings</button>
+</header>
+
+<div class="grid">
+
+<!-- TIMER -->
+
+<section class="card timer-card">
+
+    <div class="mode" id="mode">WORK</div>
+
+    <div class="timer" id="timer">25:00</div>
+
+    <div class="current-task" id="currentTask">
+        No task selected
+    </div>
+
+    <div class="controls">
+        <button class="primary" id="startBtn" onclick="toggleTimer()">
+            ▶ Start
+        </button>
+
+        <button onclick="resetTimer()">
+            ↻ Reset
+        </button>
+
+        <button onclick="skipSession()">
+            ⏭ Skip
+        </button>
+    </div>
+
+    <div class="progress-container">
+
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="progress-text" id="progressText">
+            0 / 0 sessions completed
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- TASKS -->
+
+<section class="card">
+
+    <h2>Tasks</h2>
+
+    <div class="task-input">
+
+        <input
+            id="taskInput"
+            type="text"
+            placeholder="What do you want to work on?"
+            onkeydown="handleTaskEnter(event)"
+        >
+
+        <button class="add-btn" onclick="addTask()">
+            +
+        </button>
+
+    </div>
+
+    <div id="taskList"></div>
+
+</section>
+
+</div>
+
+
+<!-- SETTINGS -->
+
+<section class="card settings" id="settings">
+
+<h2>⚙️ Settings</h2>
+
+<div class="setting-row">
+    <label>🍅 Pomodoro duration</label>
+
+    <input
+        id="workDuration"
+        type="number"
+        min="1"
+        max="180"
+        onchange="saveSettings()"
+    >
+</div>
+
+<div class="setting-row">
+    <label>☕ Short break</label>
+
+    <input
+        id="shortBreak"
+        type="number"
+        min="1"
+        max="60"
+        onchange="saveSettings()"
+    >
+</div>
+
+<div class="setting-row">
+    <label>🌙 Long break</label>
+
+    <input
+        id="longBreak"
+        type="number"
+        min="1"
+        max="120"
+        onchange="saveSettings()"
+    >
+</div>
+
+<div class="setting-row">
+    <label>🔄 Switching</label>
+
+    <select id="switchMode" onchange="saveSettings()">
+        <option value="auto">Automatic</option>
+        <option value="manual">Manual</option>
+    </select>
+</div>
+
+<div class="setting-row">
+    <label>🎨 Background color</label>
+
+    <input
+        id="backgroundColor"
+        type="color"
+        onchange="changeBackground()"
+    >
+</div>
+
+</section>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DEFAULT SETTINGS
+========================= */
+
+const defaultSettings = {
+    workDuration: 25,
+    shortBreak: 5,
+    longBreak: 15,
+    switchMode: "auto",
+    backgroundColor: "#f5f5f5"
+};
+
+
+/* =========================
+   STATE
+========================= */
+
+let settings =
+    JSON.parse(localStorage.getItem("pomodoroSettings"))
+    || defaultSettings;
+
+let tasks =
+    JSON.parse(localStorage.getItem("pomodoroTasks"))
+    || [];
+
+let currentTaskId =
+    localStorage.getItem("currentTaskId") || null;
+
+let mode = "work";
+
+let timeLeft = settings.workDuration * 60;
+
+let timerInterval = null;
+
+let running = false;
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+loadSettings();
+
+applyBackground();
+
+renderTasks();
+
+updateTimer();
+
+updateCurrentTask();
+
+
+/* =========================
+   SETTINGS
+========================= */
+
+function loadSettings() {
+
+    document.getElementById("workDuration").value =
+        settings.workDuration;
+
+    document.getElementById("shortBreak").value =
+        settings.shortBreak;
+
+    document.getElementById("longBreak").value =
+        settings.longBreak;
+
+    document.getElementById("switchMode").value =
+        settings.switchMode;
+
+    document.getElementById("backgroundColor").value =
+        settings.backgroundColor;
+}
+
+
+function saveSettings() {
+
+    settings.workDuration =
+        Number(document.getElementById("workDuration").value);
+
+    settings.shortBreak =
+        Number(document.getElementById("shortBreak").value);
+
+    settings.longBreak =
+        Number(document.getElementById("longBreak").value);
+
+    settings.switchMode =
+        document.getElementById("switchMode").value;
+
+    localStorage.setItem(
+        "pomodoroSettings",
+        JSON.stringify(settings)
+    );
+
+    if (!running) {
+
+        if (mode === "work")
+            timeLeft = settings.workDuration * 60;
+
+        else if (mode === "short")
+            timeLeft = settings.shortBreak * 60;
+
+        else
+            timeLeft = settings.longBreak * 60;
+
+        updateTimer();
+    }
+}
+
+
+function changeBackground() {
+
+    settings.backgroundColor =
+        document.getElementById("backgroundColor").value;
+
+    localStorage.setItem(
+        "pomodoroSettings",
+        JSON.stringify(settings)
+    );
+
+    applyBackground();
+}
+
+
+function applyBackground() {
+
+    document.body.style.background =
+        settings.backgroundColor;
+}
+
+
+/* =========================
+   TASKS
+========================= */
+
+function addTask() {
+
+    const input =
+        document.getElementById("taskInput");
+
+    const name =
+        input.value.trim();
+
+    if (!name) return;
+
+    const sessions =
+        Number(
+            prompt(
+                "How many Pomodoro sessions does this task need?",
+                "4"
+            )
+        );
+
+    if (!sessions || sessions < 1) return;
+
+    const task = {
+
+        id: Date.now().toString(),
+
+        name: name,
+
+        sessions: sessions,
+
+        completed: 0
+    };
+
+    tasks.push(task);
+
+    saveTasks();
+
+    input.value = "";
+
+    renderTasks();
+}
+
+
+function handleTaskEnter(event) {
+
+    if (event.key === "Enter") {
+
+        addTask();
+
+    }
+}
+
+
+function saveTasks() {
+
+    localStorage.setItem(
+        "pomodoroTasks",
+        JSON.stringify(tasks)
+    );
+
+    localStorage.setItem(
+        "currentTaskId",
+        currentTaskId || ""
+    );
+}
+
+
+function selectTask(id) {
+
+    currentTaskId = id;
+
+    saveTasks();
+
+    updateCurrentTask();
+
+    renderTasks();
+}
+
+
+function deleteTask(id) {
+
+    tasks =
+        tasks.filter(task => task.id !== id);
+
+    if (currentTaskId === id) {
+
+        currentTaskId = null;
+
+    }
+
+    saveTasks();
+
+    renderTasks();
+
+    updateCurrentTask();
+}
+
+
+function editTask(id) {
+
+    const task =
+        tasks.find(t => t.id === id);
+
+    if (!task) return;
+
+    const newName =
+        prompt("Task name:", task.name);
+
+    if (newName === null) return;
+
+    const newSessions =
+        Number(
+            prompt(
+                "Number of Pomodoro sessions:",
+                task.sessions
+            )
+        );
+
+    if (!newSessions || newSessions < 1) return;
+
+    task.name = newName.trim();
+
+    task.sessions = newSessions;
+
+    if (task.completed > task.sessions)
+        task.completed = task.sessions;
+
+    saveTasks();
+
+    renderTasks();
+
+    updateCurrentTask();
+}
+
+
+/* =========================
+   RENDER TASKS
+========================= */
+
+function renderTasks() {
+
+    const list =
+        document.getElementById("taskList");
+
+    if (tasks.length === 0) {
+
+        list.innerHTML =
+            `<div class="empty">
+                No tasks yet.<br>
+                Add a task to get started.
+            </div>`;
+
+        return;
+    }
+
+    list.innerHTML =
+        tasks.map(task => {
+
+            const percent =
+                Math.min(
+                    100,
+                    (task.completed / task.sessions) * 100
+                );
+
+            let dots = "";
+
+            for (
+                let i = 0;
+                i < task.sessions;
+                i++
+            ) {
+
+                dots += `
+                    <div class="dot ${
+                        i < task.completed
+                        ? "done"
+                        : ""
+                    }"></div>
+                `;
+            }
+
+            return `
+
+            <div class="task ${
+                task.id === currentTaskId
+                ? "active"
+                : ""
+            }">
+
+                <div
+                    class="task-info"
+                    onclick="selectTask('${task.id}')"
+                    style="cursor:pointer"
+                >
+
+                    <div class="task-name">
+                        ${escapeHTML(task.name)}
+                    </div>
+
+                    <div class="task-meta">
+                        ${task.completed}
+                        /
+                        ${task.sessions}
+                        sessions
+                        •
+                        ${Math.round(percent)}%
+                    </div>
+
+                    <div class="session-dots">
+                        ${dots}
+                    </div>
+
+                </div>
+
+                <div class="task-actions">
+
+                    <button
+                        onclick="editTask('${task.id}')"
+                    >
+                        ✏️
+                    </button>
+
+                    <button
+                        onclick="deleteTask('${task.id}')"
+                    >
+                        🗑
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+}
+
+
+function escapeHTML(text) {
+
+    return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+/* =========================
+   TIMER
+========================= */
+
+function toggleTimer() {
+
+    if (running) {
+
+        pauseTimer();
+
+    } else {
+
+        startTimer();
+
+    }
+}
+
+
+function startTimer() {
+
+    if (timerInterval) return;
+
+    running = true;
+
+    document.getElementById("startBtn").innerText =
+        "⏸ Pause";
+
+    timerInterval =
+        setInterval(() => {
+
+            timeLeft--;
+
+            updateTimer();
+
+            if (timeLeft <= 0) {
+
+                completeSession();
+
+            }
+
+        }, 1000);
+}
+
+
+function pauseTimer() {
+
+    clearInterval(timerInterval);
+
+    timerInterval = null;
+
+    running = false;
+
+    document.getElementById("startBtn").innerText =
+        "▶ Start";
+}
+
+
+function resetTimer() {
+
+    pauseTimer();
+
+    setModeDuration();
+
+    updateTimer();
+}
+
+
+function setModeDuration() {
+
+    if (mode === "work") {
+
+        timeLeft =
+            settings.workDuration * 60;
+
+    }
+
+    else if (mode === "short") {
+
+        timeLeft =
+            settings.shortBreak * 60;
+
+    }
+
+    else {
+
+        timeLeft =
+            settings.longBreak * 60;
+
+    }
+}
+
+
+/* =========================
+   SESSION COMPLETION
+========================= */
+
+function completeSession() {
+
+    pauseTimer();
+
+    if (mode === "work") {
+
+        const task =
+            tasks.find(
+                t => t.id === currentTaskId
+            );
+
+        if (task) {
+
+            if (task.completed < task.sessions) {
+
+                task.completed++;
+
+                saveTasks();
+
+                renderTasks();
+
+                updateCurrentTask();
+            }
+
+        }
+    }
+
+    const nextMode =
+        getNextMode();
+
+    if (settings.switchMode === "auto") {
+
+        mode = nextMode;
+
+        setModeDuration();
+
+        updateTimer();
+
+        updateMode();
+
+        startTimer();
+
+    } else {
+
+        mode = nextMode;
+
+        setModeDuration();
+
+        updateTimer();
+
+        updateMode();
+    }
+}
+
+
+function getNextMode() {
+
+    if (mode === "work") {
+
+        const task =
+            tasks.find(
+                t => t.id === currentTaskId
+            );
+
+        if (
+            task &&
+            task.completed >= task.sessions
+        ) {
+
+            return "long";
+
+        }
+
+        return "short";
+    }
+
+    return "work";
+}
+
+
+/* =========================
+   SKIP
+========================= */
+
+function skipSession() {
+
+    pauseTimer();
+
+    mode = getNextMode();
+
+    setModeDuration();
+
+    updateMode();
+
+    updateTimer();
+
+    if (settings.switchMode === "auto") {
+
+        startTimer();
+
+    }
+}
+
+
+/* =========================
+   TIMER DISPLAY
+========================= */
+
+function updateTimer() {
+
+    const minutes =
+        Math.floor(timeLeft / 60);
+
+    const seconds =
+        timeLeft % 60;
+
+    document.getElementById("timer").innerText =
+        `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+
+    updateProgress();
+}
+
+
+function updateMode() {
+
+    const element =
+        document.getElementById("mode");
+
+    if (mode === "work") {
+
+        element.innerText = "🍅 WORK";
+
+    }
+
+    else if (mode === "short") {
+
+        element.innerText = "☕ SHORT BREAK";
+
+    }
+
+    else {
+
+        element.innerText = "🌙 LONG BREAK";
+
+    }
+}
+
+
+/* =========================
+   CURRENT TASK
+========================= */
+
+function updateCurrentTask() {
+
+    const element =
+        document.getElementById("currentTask");
+
+    const task =
+        tasks.find(
+            t => t.id === currentTaskId
+        );
+
+    if (!task) {
+
+        element.innerText =
+            "No task selected";
+
+        document.getElementById("progressText")
+            .innerText =
+            "0 / 0 sessions completed";
+
+        document.getElementById("progress")
+            .style.width = "0%";
+
+        return;
+    }
+
+    element.innerText =
+        `🎯 ${task.name}`;
+
+    updateProgress();
+}
+
+
+function updateProgress() {
+
+    const task =
+        tasks.find(
+            t => t.id === currentTaskId
+        );
+
+    if (!task) return;
+
+    const percentage =
+        Math.min(
+            100,
+            (task.completed / task.sessions) * 100
+        );
+
+    document.getElementById("progress")
+        .style.width =
+        percentage + "%";
+
+    document.getElementById("progressText")
+        .innerText =
+        `${task.completed} / ${task.sessions} sessions completed`;
+}
+
+
+/* =========================
+   SETTINGS SCROLL
+========================= */
+
+function scrollToSettings() {
+
+    document.getElementById("settings")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+
+/* =========================
+   SAVE BEFORE LEAVING
+========================= */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        saveTasks();
+
+        localStorage.setItem(
+            "pomodoroSettings",
+            JSON.stringify(settings)
+        );
+
+    }
+);
+
+</script>
+
+</body>
+</html>
