@@ -1,0 +1,35 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 40px;
+    background-color: #f5f5f5;
+}
+
+h1 {
+    font-size: 32px;
+    margin-bottom: 5px;
+}
+
+h2 {
+    margin-top: 10px;
+}
+
+h3 {
+    font-size: 64px;
+    margin: 30px 0;
+}
+
+button {
+    padding: 12px 24px;
+    margin: 5px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+hr {
+    margin: 40px auto;
+    max-width: 500px;
+}
