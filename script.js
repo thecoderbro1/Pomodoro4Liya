@@ -22,3 +22,15 @@ function startTimer() {
         }
     }, 1000);
 }
+let timerInterval;
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+            timeLeft--;
+            updateTimer();
+        } else {
+            clearInterval(timerInterval);
+        }
+    }, 1000);
+}
