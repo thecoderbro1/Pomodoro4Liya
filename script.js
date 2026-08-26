@@ -1,4 +1,6 @@
 let timeLeft = 25 * 60;
+let timerDisplay = document.getElementById("timer");
+let timeLeft = 25 * 60;
 let timer;
 
 function startTimer() {
